@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, MapPin, Sparkles, Filter } from 'lucide-react'
+import { Search, MapPin, Filter } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -64,7 +64,7 @@ export default function Home() {
         
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-400 px-4 py-1 rounded-full text-xs tracking-wide uppercase font-semibold inline-flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Canlı Supabase Veritabanı
+            🏛️ TÜRKİYE KÜLTÜREL MİRAS ARŞİVİ
           </Badge>
           
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-zinc-100 leading-tight">
@@ -93,7 +93,7 @@ export default function Home() {
           </div>
 
           {/* Kategori Filtre Butonları */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+          <div className="no-scrollbar flex flex-nowrap items-center justify-start gap-2 overflow-x-auto pt-2 sm:flex-wrap sm:justify-center">
             {categoryFilters.map((category) => (
               <Button
                 key={category}
