@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Search, MapPin, Filter } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,12 +23,16 @@ type Site = {
 }
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true)
   const [sites, setSites] = useState<Site[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [selectedCategory, setSelectedCategory] = useState<string>('Tümü')
   const [searchQuery, setSearchQuery] = useState<string>('')
 
   const categoryFilters = ['Tümü', ...categories]
+  const handleSplashComplete = useCallback(() => {
+    setIsLoading(false)
+  }, [])
 
   // Supabase'den verileri çekme
   useEffect(() => {
@@ -57,7 +61,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
-      <SplashScreen />
+      {isLoading && <SplashScreen onComplete={handleSplashComplete} />}
       <SiteHeader />
 
       {/* Hero Section */}

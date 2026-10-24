@@ -2,26 +2,31 @@
 
 import { useEffect, useState } from 'react'
 
-export function SplashScreen() {
-  const [isVisible, setIsVisible] = useState(true)
-  const [isComplete, setIsComplete] = useState(false)
+type SplashScreenProps = {
+  onComplete: () => void
+}
+
+export function SplashScreen({ onComplete }: SplashScreenProps) {
+  const [show, setShow] = useState(true)
+  const [isFading, setIsFading] = useState(false)
+  const [showWordmark, setShowWordmark] = useState(false)
 
   useEffect(() => {
-    const revealTimer = window.setTimeout(() => {
-      setIsComplete(true)
+    const wordmarkTimer = window.setTimeout(() => setShowWordmark(true), 1500)
+    const fadeTimer = window.setTimeout(() => setIsFading(true), 2000)
+    const completeTimer = window.setTimeout(() => {
+      setShow(false)
+      onComplete()
     }, 2500)
 
-    const hideTimer = window.setTimeout(() => {
-      setIsVisible(false)
-    }, 3900)
-
     return () => {
-      window.clearTimeout(revealTimer)
-      window.clearTimeout(hideTimer)
+      window.clearTimeout(wordmarkTimer)
+      window.clearTimeout(fadeTimer)
+      window.clearTimeout(completeTimer)
     }
-  }, [])
+  }, [onComplete])
 
-  if (!isVisible) {
+  if (!show) {
     return null
   }
 
@@ -29,138 +34,97 @@ export function SplashScreen() {
     <div
       aria-label="Kültürel Miras yükleniyor"
       aria-live="polite"
-      className={`splash-screen ${isComplete ? 'splash-screen--complete' : ''}`}
+      className={`fixed inset-0 z-[9999] flex h-screen w-screen items-center justify-center bg-black transition-opacity duration-500 ${
+        isFading ? 'pointer-events-none opacity-0' : 'opacity-100'
+      }`}
       role="status"
     >
-      <div className="splash-screen__brand">
-        <svg
-          aria-hidden="true"
-          className="splash-screen__mark"
-          fill="none"
-          viewBox="0 0 160 128"
-          xmlns="http://www.w3.org/2000/svg"
+      <svg
+        aria-hidden="true"
+        className="h-auto w-[min(90vw,36rem)] overflow-visible"
+        fill="none"
+        viewBox="0 0 560 160"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="splash-gold" x1="26" x2="145" y1="20" y2="140" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#FEF3C7" />
+            <stop offset="0.5" stopColor="#FBBF24" />
+            <stop offset="1" stopColor="#B45309" />
+          </linearGradient>
+          <filter id="splash-star-glow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <path
+          className="splash-k-stem"
+          d="M38 25V135"
+          pathLength="1"
+          stroke="url(#splash-gold)"
+          strokeLinecap="round"
+          strokeWidth="9"
+        />
+        <path
+          className="splash-crescent"
+          d="M116 24C82 24 57 49 57 80C57 111 82 136 116 136C100 124 91 104 91 80C91 56 100 36 116 24Z"
+          fill="url(#splash-gold)"
+        />
+        <path
+          className="splash-star"
+          d="M111 47L115 58L127 58L117 65L121 76L111 69L101 76L105 65L95 58L107 58L111 47Z"
+          fill="#FEF3C7"
+          filter="url(#splash-star-glow)"
+          transform-origin="111 62"
+        />
+        <text
+          className={`splash-wordmark ${showWordmark ? 'splash-wordmark--visible' : ''}`}
+          x="151"
+          y="96"
+          fill="#FEF3C7"
+          fontFamily="Arial, sans-serif"
+          fontSize="29"
+          fontWeight="600"
+          letterSpacing="3"
         >
-          <defs>
-            <linearGradient id="splash-gold" x1="36" x2="126" y1="18" y2="112" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#FDE68A" />
-              <stop offset="1" stopColor="#D97706" />
-            </linearGradient>
-          </defs>
-
-          <path
-            className="splash-screen__stroke splash-screen__stem"
-            d="M34 16V112"
-            pathLength="1"
-            stroke="url(#splash-gold)"
-            strokeLinecap="round"
-            strokeWidth="8"
-          />
-          <path
-            className="splash-screen__stroke splash-screen__arm splash-screen__arm--top"
-            d="M38 65L82 20"
-            pathLength="1"
-            stroke="url(#splash-gold)"
-            strokeLinecap="round"
-            strokeWidth="8"
-          />
-          <path
-            className="splash-screen__stroke splash-screen__arm splash-screen__arm--bottom"
-            d="M38 64L83 108"
-            pathLength="1"
-            stroke="url(#splash-gold)"
-            strokeLinecap="round"
-            strokeWidth="8"
-          />
-
-          <path
-            className="splash-screen__crescent"
-            d="M104 31C78 40 76 80 101 96C113 104 128 101 138 92C119 94 104 80 104 64C104 48 119 34 138 36C129 28 115 27 104 31Z"
-            fill="url(#splash-gold)"
-          />
-          <path
-            className="splash-screen__star"
-            d="M137 18L140 25L148 26L142 31L144 39L137 35L130 39L132 31L126 26L134 25L137 18Z"
-            fill="#FDE68A"
-            transform-origin="137 29"
-          />
-        </svg>
-
-        <span className="splash-screen__wordmark">ÜLTÜREL MİRAS</span>
-      </div>
+          ÜLTÜREL MİRAS
+        </text>
+      </svg>
 
       <style jsx>{`
-        .splash-screen {
-          align-items: center;
-          background: #09090b;
-          display: flex;
-          inset: 0;
-          justify-content: center;
-          opacity: 1;
-          position: fixed;
-          transition: opacity 1.4s ease;
-          z-index: 100;
-        }
-
-        .splash-screen--complete {
-          opacity: 0;
-          pointer-events: none;
-        }
-
-        .splash-screen__brand {
-          align-items: center;
-          display: flex;
-          gap: 0.5rem;
-          max-width: calc(100vw - 2rem);
-        }
-
-        .splash-screen__mark {
-          flex: 0 0 auto;
-          height: 7rem;
-          overflow: visible;
-          width: 9rem;
-        }
-
-        .splash-screen__stroke {
+        .splash-k-stem {
+          animation: draw-stem 0.8s ease-out forwards;
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
         }
 
-        .splash-screen__stem {
-          animation: draw-stem 0.7s ease-out 0.15s forwards;
-        }
-
-        .splash-screen__arm--top {
-          animation: draw-arm 0.65s ease-out 0.55s forwards;
-        }
-
-        .splash-screen__arm--bottom {
-          animation: draw-arm 0.65s ease-out 0.85s forwards;
-        }
-
-        .splash-screen__crescent {
-          animation: reveal-crescent 1s ease-out 1.15s forwards;
+        .splash-crescent {
+          animation: reveal-crescent 0.9s ease-out 0.35s forwards;
           opacity: 0;
-          transform-origin: 108px 64px;
+          transform-origin: 88px 80px;
         }
 
-        .splash-screen__star {
-          animation: spin-star 1.25s cubic-bezier(0.2, 0.8, 0.2, 1) 1.45s forwards;
+        .splash-star {
+          animation: spin-star 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.8s forwards;
           opacity: 0;
           transform: scale(0.2) rotate(-90deg);
         }
 
-        .splash-screen__wordmark {
-          color: #fcd34d;
-          font-size: clamp(0.7rem, 3vw, 1.1rem);
-          font-weight: 700;
-          letter-spacing: 0.28em;
-          margin-left: 0.28em;
+        .splash-wordmark {
           opacity: 0;
-          transform: translateY(0.5rem);
+          transform: translateX(-18px);
+          transform-box: fill-box;
+          transform-origin: left center;
+          transition: opacity 0.7s ease, transform 0.7s ease;
         }
 
-        .splash-screen--complete .splash-screen__wordmark {
-          animation: reveal-wordmark 0.7s ease-out forwards;
+        .splash-wordmark--visible {
+          opacity: 1;
+          transform: translateX(0);
         }
 
         @keyframes draw-stem {
@@ -169,16 +133,10 @@ export function SplashScreen() {
           }
         }
 
-        @keyframes draw-arm {
-          to {
-            stroke-dashoffset: 0;
-          }
-        }
-
         @keyframes reveal-crescent {
           from {
             opacity: 0;
-            transform: scale(0.7) rotate(-20deg);
+            transform: scale(0.7) rotate(-12deg);
           }
           to {
             opacity: 1;
@@ -201,22 +159,20 @@ export function SplashScreen() {
           }
         }
 
-        @keyframes reveal-wordmark {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
         @media (prefers-reduced-motion: reduce) {
-          .splash-screen__stroke,
-          .splash-screen__crescent,
-          .splash-screen__star,
-          .splash-screen__wordmark {
+          .splash-k-stem,
+          .splash-crescent,
+          .splash-star {
             animation: none;
             opacity: 1;
             stroke-dashoffset: 0;
             transform: none;
+          }
+
+          .splash-wordmark {
+            opacity: 1;
+            transform: none;
+            transition: none;
           }
         }
       `}</style>
