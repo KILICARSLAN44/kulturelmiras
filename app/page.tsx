@@ -2,25 +2,38 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, MapPin, Landmark, Sparkles, Filter } from 'lucide-react'
+import { Search, MapPin, Sparkles, Filter } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase/client'
+import { categories, normalizeCategory } from '@/lib/categories'
+import { SiteHeader } from '@/components/site-header'
+
+type Site = {
+  id: string
+  title: string
+  category: string
+  location: string
+  period: string
+  details: string
+  image?: string | string[] | null
+  image_urls?: string[] | null
+}
 
 export default function Home() {
-  const [sites, setSites] = useState<any[]>([])
+  const [sites, setSites] = useState<Site[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [selectedCategory, setSelectedCategory] = useState<string>('Tümü')
   const [searchQuery, setSearchQuery] = useState<string>('')
 
-  const categories = ['Tümü', 'Arkeolojik Alan', 'Antik Şehir', 'Mimari Eser', 'Sözlü Kültür']
+  const categoryFilters = ['Tümü', ...categories]
 
   // Supabase'den verileri çekme
   useEffect(() => {
     async function fetchSites() {
       setLoading(true)
-      const { data, error } = await supabase.from('eserler').select('*')
+      const { data, error } = await supabase.from('eserler').select('*').eq('is_approved', true)
       if (error) {
         console.error('Veri çekilirken hata oluştu:', error)
       } else if (data) {
@@ -33,7 +46,8 @@ export default function Home() {
 
   // Filtreleme mantığı
   const filteredSites = sites.filter(site => {
-    const matchesCategory = selectedCategory === 'Tümü' || site.category === selectedCategory
+    const normalizedCategory = normalizeCategory(site.category)
+    const matchesCategory = selectedCategory === 'Tümü' || normalizedCategory === selectedCategory
     const matchesSearch = site.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           site.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           site.details?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -42,31 +56,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
-      {/* Navbar / Üst Menü */}
-      <header className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Landmark className="h-6 w-6 text-amber-500" />
-            <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">
-              MİRAS
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-400 font-medium">
-            <Link href="/" className="text-zinc-100 hover:text-amber-400 transition-colors">Ana Sayfa</Link>
-            <a href="#" className="hover:text-amber-400 transition-colors">Keşfet</a>
-            <a href="#" className="hover:text-amber-400 transition-colors">Harita</a>
-            <a href="#" className="hover:text-amber-400 transition-colors">Arşiv</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" className="text-zinc-300 hover:text-white hover:bg-zinc-800">
-              Giriş Yap
-            </Button>
-            <Button className="bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold transition-all">
-              Kayıt Ol
-            </Button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-12 md:pt-28 md:pb-16 px-6 overflow-hidden">
@@ -104,7 +94,7 @@ export default function Home() {
 
           {/* Kategori Filtre Butonları */}
           <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-            {categories.map((category) => (
+            {categoryFilters.map((category) => (
               <Button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
@@ -162,12 +152,12 @@ export default function Home() {
                   <div>
                     <div className="h-48 overflow-hidden relative">
                       <img
-                        src={site.image}
+                        src={(Array.isArray(site.image_urls) ? site.image_urls[0] : Array.isArray(site.image) ? site.image[0] : site.image) || undefined}
                         alt={site.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <Badge className="absolute top-3 left-3 bg-zinc-950/80 backdrop-blur-md text-amber-400 border-zinc-800 text-xs">
-                        {site.category}
+                        {normalizeCategory(site.category)}
                       </Badge>
                     </div>
                     <CardHeader className="p-5 pb-2">
