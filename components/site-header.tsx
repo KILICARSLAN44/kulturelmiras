@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Landmark, Menu, Plus, X } from 'lucide-react'
+import Image from 'next/image'
+import { Menu, Plus, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
 export function SiteHeader() {
@@ -39,8 +40,17 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md">
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2">
-          <Landmark className="h-6 w-6 text-amber-500" />
-          <span className="bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-xl font-bold tracking-tight text-transparent">MİRAS</span>
+          <Image
+            src="/icon.png"
+            alt="Kültürel Miras Arşivi logosu"
+            width={36}
+            height={36}
+            className="h-9 w-9 rounded-md"
+            priority
+          />
+          <span className="bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-lg font-bold tracking-tight text-transparent sm:text-xl">
+            KÜLTÜREL MİRAS
+          </span>
         </Link>
         <nav className="hidden items-center gap-3 text-sm font-medium text-zinc-400 sm:flex md:gap-6">
           <Link href="/" className="whitespace-nowrap text-zinc-100 transition-colors hover:text-amber-400">Ana Sayfa</Link>
