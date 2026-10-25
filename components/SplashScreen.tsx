@@ -79,7 +79,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
           d="M111 47L115 58L127 58L117 65L121 76L111 69L101 76L105 65L95 58L107 58L111 47Z"
           fill="#FEF3C7"
           filter="url(#splash-star-glow)"
-          transformOrigin="111 62"
+          style={{ transformOrigin: '111px 62px' }}
         />
         <text
           className={`splash-wordmark ${showWordmark ? 'splash-wordmark--visible' : ''}`}
