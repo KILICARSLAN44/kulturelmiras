@@ -79,11 +79,11 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
           d="M111 47L115 58L127 58L117 65L121 76L111 69L101 76L105 65L95 58L107 58L111 47Z"
           fill="#FEF3C7"
           filter="url(#splash-star-glow)"
-          transform-origin="111 62"
+          transformOrigin="111 62"
         />
         <text
           className={`splash-wordmark ${showWordmark ? 'splash-wordmark--visible' : ''}`}
-          x="151"
+          x="136"
           y="96"
           fill="#FEF3C7"
           fontFamily="Arial, sans-serif"
@@ -116,7 +116,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
 
         .splash-wordmark {
           opacity: 0;
-          transform: translateX(-18px);
+          transform: translateX(-40px);
           transform-box: fill-box;
           transform-origin: left center;
           transition: opacity 0.7s ease, transform 0.7s ease;
@@ -124,7 +124,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
 
         .splash-wordmark--visible {
           opacity: 1;
-          transform: translateX(0);
+          transform: translateX(-22px);
         }
 
         @keyframes draw-stem {
