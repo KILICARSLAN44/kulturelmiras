@@ -15,6 +15,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Kültürel Miras Arşivi | Türkiye'nin Dijital Mirası",
   description: "Türkiye'nin tarihi, mimari ve sözlü kültür mirasını dijital ortamda belgeleyen ve koruyan topluluk platformu.",
+  openGraph: {
+    title: "Kültürel Miras Arşivi | Türkiye'nin Dijital Mirası",
+    description: "Türkiye'nin tarihi, mimari ve sözlü kültür mirasını dijital ortamda belgeleyen ve koruyan topluluk platformu.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Kültürel Miras Arşivi",
+      },
+    ],
+  },
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
