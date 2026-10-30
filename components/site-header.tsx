@@ -78,11 +78,11 @@ export function SiteHeader() {
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image
-            src="/icon.png"
+            src="/logo-hilal-k.png"
             alt="Kültürel Miras Arşivi logosu"
             width={36}
             height={36}
-            className="h-9 w-9 rounded-md"
+            className="h-8 w-8 rounded-md sm:h-9 sm:w-9"
             priority
           />
           <span className="bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-lg font-bold tracking-tight text-transparent sm:text-xl">
