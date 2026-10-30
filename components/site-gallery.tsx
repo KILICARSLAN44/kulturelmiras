@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Image as ImageIcon, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { CulturalImage } from '@/components/cultural-image'
 
 type SiteGalleryProps = {
   title: string
@@ -25,8 +26,8 @@ export function SiteGallery({ title, imageUrls }: SiteGalleryProps) {
 
   if (!heroImage) {
     return (
-      <section aria-label={`${title} görsel galerisi`} className="flex h-72 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900">
-        <ImageIcon className="h-12 w-12 text-zinc-700" />
+      <section aria-label={`${title} görsel galerisi`} className="h-72 overflow-hidden rounded-lg border border-zinc-800">
+        <CulturalImage src={null} alt={`${title} için görsel bulunamadı`} fallbackClassName="h-full" />
       </section>
     )
   }
@@ -39,7 +40,7 @@ export function SiteGallery({ title, imageUrls }: SiteGalleryProps) {
           onClick={() => setSelectedIndex(0)}
           className="group relative block aspect-[16/9] w-full overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 text-left"
         >
-          <img src={heroImage} alt={title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
+          <CulturalImage src={heroImage} alt={title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
           <span className="absolute bottom-4 left-4 rounded-sm border border-white/20 bg-black/50 px-2.5 py-1 text-xs text-zinc-200 backdrop-blur-sm">Ana fotoğraf</span>
           <span className="absolute bottom-4 right-4 rounded-sm border border-white/20 bg-black/50 px-2.5 py-1 text-xs text-zinc-200 backdrop-blur-sm">
             01 / {imageUrls.length.toString().padStart(2, '0')}
@@ -55,7 +56,7 @@ export function SiteGallery({ title, imageUrls }: SiteGalleryProps) {
                 onClick={() => setSelectedIndex(index + 1)}
                 className="group relative aspect-[4/3] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900"
               >
-                <img src={imageUrl} alt={`${title} - galeri görseli ${index + 1}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <CulturalImage src={imageUrl} alt={`${title} - galeri görseli ${index + 1}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 {index === 2 && hiddenImageCount > 0 && (
                   <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-lg font-semibold text-white backdrop-blur-[1px]">
                     +{hiddenImageCount}

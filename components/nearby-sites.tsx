@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Compass, LocateFixed, MapPin, Navigation } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { CulturalImage } from '@/components/cultural-image'
 
 type NearbySite = {
   id: string
@@ -17,6 +18,7 @@ type NearbySite = {
 
 type NearbySitesProps = {
   sites: NearbySite[]
+  className?: string
 }
 
 type Coordinates = {
@@ -42,7 +44,7 @@ function getCoordinate(value: number | string | null | undefined) {
   return typeof coordinate === 'number' && Number.isFinite(coordinate) ? coordinate : null
 }
 
-export function NearbySites({ sites }: NearbySitesProps) {
+export function NearbySites({ sites, className = '' }: NearbySitesProps) {
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null)
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -89,7 +91,7 @@ export function NearbySites({ sites }: NearbySitesProps) {
   }
 
   return (
-    <section className="mb-8 rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-zinc-900/60 to-zinc-950/60 p-5 shadow-[0_18px_40px_rgba(245,158,11,0.08)] backdrop-blur-xl sm:p-6">
+    <section className={`rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-zinc-900/60 to-zinc-950/60 p-4 shadow-[0_18px_40px_rgba(245,158,11,0.08)] backdrop-blur-xl sm:p-5 ${className}`}>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-4">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-500/10 text-amber-300">
@@ -116,7 +118,7 @@ export function NearbySites({ sites }: NearbySitesProps) {
             return (
               <Link key={site.id} href={`/eser/${site.id}`} className="group flex gap-3 rounded-2xl border border-white/10 bg-zinc-950/45 p-3 transition-colors hover:border-amber-400/40">
                 <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-zinc-800">
-                  {image && <img src={image} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-110" />}
+                  <CulturalImage src={image} alt={site.title} className="h-full w-full object-cover transition-transform group-hover:scale-110" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="line-clamp-2 text-sm font-semibold text-zinc-100 group-hover:text-amber-300">{site.title}</h3>

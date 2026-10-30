@@ -10,6 +10,7 @@ import { FavoriteButton } from '@/components/favorite-button'
 import { FAVORITES_UPDATED_EVENT, getFavoriteIds } from '@/lib/favorites'
 import { supabase } from '@/lib/supabase/client'
 import { normalizeCategory } from '@/lib/categories'
+import { CulturalImage } from '@/components/cultural-image'
 
 type FavoriteSite = {
   id: string
@@ -17,7 +18,6 @@ type FavoriteSite = {
   category: string
   city?: string | null
   location: string
-  period: string
   details: string
   image?: string | string[] | null
   image_urls?: string[] | null
@@ -78,15 +78,15 @@ export default function FavoritesPage() {
               <Link key={site.id} href={`/eser/${site.id}`} className="group block h-full">
                 <Card className="h-full overflow-hidden border border-zinc-800 bg-zinc-900/50 text-zinc-100 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-amber-500/40">
                   <div className="relative isolate h-48 overflow-hidden">
-                    <img src={(Array.isArray(site.image_urls) ? site.image_urls[0] : Array.isArray(site.image) ? site.image[0] : site.image) || undefined} alt={site.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                    <CulturalImage src={(Array.isArray(site.image_urls) ? site.image_urls[0] : Array.isArray(site.image) ? site.image[0] : site.image) || undefined} alt={site.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 to-transparent" />
                     <FavoriteButton siteId={site.id} className="absolute right-3 top-3 z-10" />
                   </div>
                   <CardHeader className="p-5 pb-2">
                     <Badge className="mb-2 w-fit border border-amber-400/30 bg-amber-500/10 text-amber-300">{normalizeCategory(site.category)}</Badge>
-                    <CardTitle className="text-lg text-zinc-100 group-hover:text-amber-300">{site.title}</CardTitle>
+                    <CardTitle className="font-heading luxury-heading text-lg group-hover:text-amber-200">{site.title}</CardTitle>
                   </CardHeader>
-                  <CardContent className="p-5 pt-0"><p className="flex items-center gap-1.5 text-xs text-zinc-500"><MapPin className="h-3.5 w-3.5 text-amber-500" />{site.city || site.location} <span>•</span> {site.period}</p><p className="mt-3 line-clamp-2 text-sm leading-6 text-zinc-400">{site.details}</p></CardContent>
+                  <CardContent className="p-5 pt-0"><p className="flex items-center gap-1.5 text-xs text-zinc-500"><MapPin className="h-3.5 w-3.5 text-amber-500" />{site.city || site.location}</p><p className="mt-3 line-clamp-2 text-sm leading-6 text-zinc-400">{site.details}</p></CardContent>
                 </Card>
               </Link>
             ))}

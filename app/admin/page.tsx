@@ -10,7 +10,6 @@ type Site = {
   title: string
   category: string
   location: string
-  period: string
   details: string
   highlights: string[]
   images: string[]
@@ -66,7 +65,6 @@ function SiteRow({ site, pending }: { site: Site; pending: boolean }) {
       <td className="px-4 py-3 font-medium">{site.title}</td>
       <td className="px-4 py-3 text-zinc-400">{site.category}</td>
       <td className="px-4 py-3 text-zinc-400">{site.location}</td>
-      <td className="px-4 py-3 text-zinc-400">{site.period}</td>
       <td className="px-4 py-3">
         <div className="flex flex-wrap items-center gap-3">
           {pending && (
@@ -97,7 +95,7 @@ function SiteTable({ sites, pending }: { sites: Site[]; pending: boolean }) {
     <div className="overflow-x-auto">
       <table className="w-full min-w-[700px] text-left text-sm">
         <thead className="bg-zinc-900 text-zinc-400">
-          <tr><th className="px-4 py-3">Eser</th><th className="px-4 py-3">Kategori</th><th className="px-4 py-3">Konum</th><th className="px-4 py-3">Dönem</th><th className="px-4 py-3">İşlemler</th></tr>
+          <tr><th className="px-4 py-3">Eser</th><th className="px-4 py-3">Kategori</th><th className="px-4 py-3">Konum</th><th className="px-4 py-3">İşlemler</th></tr>
         </thead>
         <tbody className="divide-y divide-zinc-800">
           {sites.map((site) => <SiteRow key={site.id} site={site} pending={pending} />)}
@@ -126,7 +124,6 @@ export default async function AdminPage() {
     title: site.title,
     category: site.category,
     location: site.location,
-    period: site.period,
     details: site.details ?? '',
     highlights: normalizeList(site.highlights),
     images: normalizeImages(site.image_urls, site.image),

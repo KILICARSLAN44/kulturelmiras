@@ -11,7 +11,6 @@ type HeritageSite = {
   city?: string | null
   location?: string | null
   details?: string | null
-  period?: string | null
 }
 
 type TurkeyMapProps = {

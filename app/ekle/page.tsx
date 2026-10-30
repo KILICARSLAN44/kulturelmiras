@@ -52,7 +52,6 @@ export default function AddSitePage() {
       location: optionalText('location'),
       latitude: optionalNumber('latitude'),
       longitude: optionalNumber('longitude'),
-      period: String(formData.get('period')).trim(),
       details: String(formData.get('details')).trim(),
       contributor_name: String(formData.get('contributor_name') ?? '').trim(),
       image: imageUrls,
@@ -76,7 +75,7 @@ export default function AddSitePage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-zinc-950 font-[family-name:var(--font-geist-sans)] text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
+    <main className="relative min-h-screen overflow-hidden bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(217,119,6,0.12),transparent)]" />
 
       <header className="relative z-10 border-b border-zinc-800/80 bg-zinc-950/75 backdrop-blur-md">
@@ -97,7 +96,7 @@ export default function AddSitePage() {
           <div className="mb-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-amber-400">
             <Sparkles className="h-4 w-4" /> Kolektif arşiv
           </div>
-          <h1 className="max-w-lg text-4xl font-semibold leading-tight text-zinc-50 sm:text-5xl">
+          <h1 className="luxury-heading max-w-lg text-4xl font-semibold leading-tight sm:text-5xl">
             Bir mirasın izini <span className="text-amber-400">geleceğe</span> bırakın.
           </h1>
           <p className="mt-5 max-w-md text-base leading-7 text-zinc-400">
@@ -105,7 +104,7 @@ export default function AddSitePage() {
           </p>
           <div className="mt-10 hidden border-l border-amber-500/40 pl-5 text-sm leading-6 text-zinc-500 lg:block">
             <p className="text-zinc-300">Kayda başlamadan önce</p>
-            <p className="mt-1">Eserin adını, bulunduğu yeri ve dönemini doğrulayın. Görsel için doğrudan erişilebilir bir bağlantı kullanın.</p>
+            <p className="mt-1">Eserin adını ve bulunduğu yeri doğrulayın. Görsel için doğrudan erişilebilir bir bağlantı kullanın.</p>
           </div>
         </section>
 
@@ -129,9 +128,8 @@ export default function AddSitePage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="category" className="mb-2 block text-sm font-medium text-zinc-300">Kategori</label>
+            <div>
+              <label htmlFor="category" className="mb-2 block text-sm font-medium text-zinc-300">Kategori</label>
                 <select
                   id="category"
                   name="category"
@@ -142,19 +140,6 @@ export default function AddSitePage() {
                   <option value="" disabled>Kategori seçin</option>
                   {categories.map((category) => <option key={category} value={category}>{category}</option>)}
                 </select>
-              </div>
-              <div>
-                <label htmlFor="period" className="mb-2 block text-sm font-medium text-zinc-300">Dönem</label>
-                <input
-                  id="period"
-                  name="period"
-                  type="text"
-                  required
-                  maxLength={100}
-                  placeholder="Örn. 4. yüzyıl"
-                  className="h-11 w-full rounded-md border border-zinc-700 bg-zinc-950 px-3.5 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"
-                />
-              </div>
             </div>
 
             <div>

@@ -8,7 +8,6 @@ type Site = {
   title: string
   category: string
   location: string
-  period: string
   details: string
   highlights: string[]
   images: string[]
@@ -66,7 +65,6 @@ export function SitePreview({ site, pending, approveAction, deleteAction }: Site
               )}
               <dl className="grid gap-4 sm:grid-cols-3">
                 <div><dt className="text-xs text-zinc-500">Kategori</dt><dd className="mt-1 text-sm text-zinc-200">{site.category}</dd></div>
-                <div><dt className="text-xs text-zinc-500">Dönem</dt><dd className="mt-1 text-sm text-zinc-200">{site.period}</dd></div>
                 <div><dt className="text-xs text-zinc-500">Konum</dt><dd className="mt-1 text-sm text-zinc-200">{site.location}</dd></div>
               </dl>
               <div>

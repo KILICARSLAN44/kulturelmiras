@@ -11,7 +11,7 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card relative flex flex-col gap-(--card-spacing) overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/60 py-(--card-spacing) text-sm text-card-foreground shadow-[0_14px_36px_rgba(0,0,0,0.35)] backdrop-blur-xl ring-1 ring-white/5 transition-all duration-300 [--card-spacing:--spacing(4)] hover:-translate-y-1.5 hover:border-amber-400/40 hover:shadow-[0_18px_42px_rgba(217,119,6,0.18)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-2xl *:[img:last-child]:rounded-b-2xl",
+        "group/card relative flex flex-col gap-(--card-spacing) overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-900/60 py-(--card-spacing) text-sm text-card-foreground shadow-[0_14px_36px_rgba(0,0,0,0.35)] backdrop-blur-xl ring-1 ring-white/5 transition-all duration-300 [--card-spacing:--spacing(4)] hover:-translate-y-1 hover:scale-[1.01] hover:border-amber-500/40 hover:shadow-[0_0_30px_-5px_rgba(245,158,11,0.15)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-2xl *:[img:last-child]:rounded-b-2xl",
         className
       )}
       {...props}

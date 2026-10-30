@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowLeft, ArrowUpRight, BookOpen, CalendarDays, Landmark, MapPin, Navigation, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, BookOpen, Landmark, MapPin, Navigation, Sparkles } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -54,11 +54,19 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
   const location = typeof site.location === 'string' ? site.location.trim() : ''
   const latitude = typeof site.latitude === 'number' ? site.latitude : Number(site.latitude)
   const longitude = typeof site.longitude === 'number' ? site.longitude : Number(site.longitude)
-  const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude)
-    && latitude >= -90 && latitude <= 90
-    && longitude >= -180 && longitude <= 180
-  const hasLocation = location.length > 0 || hasCoordinates
-  const locationLabel = location || (hasCoordinates ? `${latitude}, ${longitude}` : '')
+  const isZeroLocation = location.replace(/\s+/g, '') === '0,0'
+  const hasLocation = Boolean(
+    site.latitude
+    && site.longitude
+    && Number(site.latitude) !== 0
+    && Number(site.longitude) !== 0
+    && Number.isFinite(latitude)
+    && Number.isFinite(longitude)
+    && location
+    && location !== '0, 0'
+    && !isZeroLocation
+  )
+  const locationLabel = hasLocation ? location : ''
   const mapQuery = encodeURIComponent(`${site.title ?? ''}, ${locationLabel}`)
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
   const imageUrls = (Array.isArray(site.image_urls) ? site.image_urls : Array.isArray(site.image) ? site.image : site.image ? [site.image] : [])
@@ -68,7 +76,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
   const hasPhysicalLocation = physicalLocationCategories.has(category)
 
   return (
-    <div className="min-h-screen bg-zinc-950 font-[family-name:var(--font-geist-sans)] text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
       <header className="sticky top-0 z-30 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-200 transition-colors hover:text-amber-400">
@@ -96,7 +104,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                 {category}
               </Badge>
               <div className="flex flex-wrap items-center gap-4">
-                <h1 className="text-4xl font-semibold leading-tight text-zinc-50 sm:text-5xl lg:text-6xl">{site.title}</h1>
+                <h1 className="luxury-heading text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">{site.title}</h1>
                 <div className="flex flex-wrap items-center gap-2">
                   <AudioGuide text={typeof site.details === 'string' ? site.details : ''} />
                   <FavoriteButton siteId={site.id} label />
@@ -105,7 +113,6 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
               </div>
               <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-400">
                 {hasLocation && <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-amber-500" />{locationLabel}</span>}
-                <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-amber-500" />{site.period}</span>
               </div>
             </div>
             {hasLocation && <a
@@ -220,10 +227,6 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                 <div className="py-4">
                   <dt className="text-xs text-zinc-500">Kategori</dt>
                   <dd className="mt-1 text-sm text-zinc-200">{category}</dd>
-                </div>
-                <div className="py-4">
-                  <dt className="text-xs text-zinc-500">Dönem</dt>
-                  <dd className="mt-1 text-sm text-zinc-200">{site.period}</dd>
                 </div>
                 {hasLocation && <div className="py-4">
                   <dt className="text-xs text-zinc-500">Konum</dt>

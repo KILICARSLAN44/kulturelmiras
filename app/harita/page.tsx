@@ -13,7 +13,6 @@ type Site = {
   category: string
   city?: string | null
   location: string
-  period: string
   details: string
   image?: string | string[] | null
   image_urls?: string[] | null

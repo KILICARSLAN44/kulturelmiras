@@ -12,7 +12,6 @@ type EditForm = {
   location: string
   latitude: string
   longitude: string
-  period: string
   details: string
   contributor_name: string
 }
@@ -32,7 +31,7 @@ function normalizeImages(imageUrls: unknown, image: unknown): string[] {
 export default function EditSitePage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
-  const [form, setForm] = useState<EditForm>({ title: '', category: '', location: '', latitude: '', longitude: '', period: '', details: '', contributor_name: '' })
+  const [form, setForm] = useState<EditForm>({ title: '', category: '', location: '', latitude: '', longitude: '', details: '', contributor_name: '' })
   const [imageInputs, setImageInputs] = useState<string[]>([])
   const [highlightInputs, setHighlightInputs] = useState<string[]>([])
   const [error, setError] = useState('')
@@ -50,7 +49,6 @@ export default function EditSitePage() {
           location: data.location ?? '',
           latitude: data.latitude == null ? '' : String(data.latitude),
           longitude: data.longitude == null ? '' : String(data.longitude),
-          period: data.period ?? '',
           details: data.details ?? '',
           contributor_name: data.contributor_name ?? '',
         })
@@ -96,9 +94,8 @@ export default function EditSitePage() {
       <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-6 rounded-xl border border-zinc-800 bg-zinc-900/70 p-6 sm:p-8">
         <div><p className="text-sm text-amber-400">Yönetim</p><h1 className="mt-1 text-2xl font-semibold">Eseri düzenle</h1></div>
         <div className="grid gap-4 sm:grid-cols-2">
-          {(['title', 'location', 'period'] as const).map((field) => (
-            <input key={field} required={field !== 'location'} value={form[field]} onChange={(event) => setForm({ ...form, [field]: event.target.value })} placeholder={field === 'title' ? 'Eser adı' : field === 'location' ? 'Konum (opsiyonel)' : 'Dönem'} className="h-11 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
-          ))}
+          <input required value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} placeholder="Eser adı" className="h-11 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
+          <input value={form.location} onChange={(event) => setForm({ ...form, location: event.target.value })} placeholder="Konum (opsiyonel)" className="h-11 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
           <input type="number" step="any" value={form.latitude} onChange={(event) => setForm({ ...form, latitude: event.target.value })} placeholder="Enlem (opsiyonel)" className="h-11 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
           <input type="number" step="any" value={form.longitude} onChange={(event) => setForm({ ...form, longitude: event.target.value })} placeholder="Boylam (opsiyonel)" className="h-11 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
           <select required value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} className="h-11 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm outline-none focus:border-amber-500">
