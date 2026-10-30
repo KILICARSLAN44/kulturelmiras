@@ -8,19 +8,31 @@ type SplashScreenProps = {
 }
 
 export function SplashScreen({ onComplete }: SplashScreenProps) {
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
   const [isFading, setIsFading] = useState(false)
 
   useEffect(() => {
-    const fadeTimer = window.setTimeout(() => setIsFading(true), 2400)
-    const completeTimer = window.setTimeout(() => {
-      setVisible(false)
-      onComplete()
-    }, 3000)
+    if (window.sessionStorage.getItem('hasSeenSplash') === 'true') {
+      const completeTimer = window.setTimeout(onComplete, 0)
+      return () => window.clearTimeout(completeTimer)
+    }
+
+    let fadeTimer: number | undefined
+    let completeTimer: number | undefined
+    const startTimer = window.requestAnimationFrame(() => {
+      window.sessionStorage.setItem('hasSeenSplash', 'true')
+      setVisible(true)
+      fadeTimer = window.setTimeout(() => setIsFading(true), 2400)
+      completeTimer = window.setTimeout(() => {
+        setVisible(false)
+        onComplete()
+      }, 3000)
+    })
 
     return () => {
-      window.clearTimeout(fadeTimer)
-      window.clearTimeout(completeTimer)
+      window.cancelAnimationFrame(startTimer)
+      if (fadeTimer !== undefined) window.clearTimeout(fadeTimer)
+      if (completeTimer !== undefined) window.clearTimeout(completeTimer)
     }
   }, [onComplete])
 

@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { supabase } from '@/lib/supabase/client'
 import { SiteGallery } from '@/components/site-gallery'
+import { AudioGuide } from '@/components/audio-guide'
+import { FavoriteButton } from '@/components/favorite-button'
+import { SharePanel } from '@/components/share-panel'
 import { getSectionTitle, normalizeCategory } from '@/lib/categories'
 
 const physicalLocationCategories = new Set([
@@ -49,13 +52,19 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
         .filter(Boolean)
     })
   const location = typeof site.location === 'string' ? site.location.trim() : ''
-  const mapQuery = encodeURIComponent(`${site.title ?? ''}, ${location}`)
+  const latitude = typeof site.latitude === 'number' ? site.latitude : Number(site.latitude)
+  const longitude = typeof site.longitude === 'number' ? site.longitude : Number(site.longitude)
+  const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude)
+    && latitude >= -90 && latitude <= 90
+    && longitude >= -180 && longitude <= 180
+  const hasLocation = location.length > 0 || hasCoordinates
+  const locationLabel = location || (hasCoordinates ? `${latitude}, ${longitude}` : '')
+  const mapQuery = encodeURIComponent(`${site.title ?? ''}, ${locationLabel}`)
   const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
   const imageUrls = (Array.isArray(site.image_urls) ? site.image_urls : Array.isArray(site.image) ? site.image : site.image ? [site.image] : [])
     .filter((imageUrl: unknown): imageUrl is string => typeof imageUrl === 'string' && imageUrl.trim().length > 0)
   const category = normalizeCategory(site.category)
   const sectionTitle = getSectionTitle(category)
-  const hasLocation = location.length > 0
   const hasPhysicalLocation = physicalLocationCategories.has(category)
 
   return (
@@ -83,12 +92,19 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
           </div>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-4xl">
-              <Badge variant="outline" className="mb-4 border-amber-500/30 bg-amber-500/10 text-amber-300">
+              <Badge variant="outline" className="mb-4 border border-amber-500/20 bg-zinc-900/50 text-amber-400 backdrop-blur-md">
                 {category}
               </Badge>
-              <h1 className="text-4xl font-semibold leading-tight text-zinc-50 sm:text-5xl lg:text-6xl">{site.title}</h1>
+              <div className="flex flex-wrap items-center gap-4">
+                <h1 className="text-4xl font-semibold leading-tight text-zinc-50 sm:text-5xl lg:text-6xl">{site.title}</h1>
+                <div className="flex flex-wrap items-center gap-2">
+                  <AudioGuide text={typeof site.details === 'string' ? site.details : ''} />
+                  <FavoriteButton siteId={site.id} label />
+                  <SharePanel title={site.title} />
+                </div>
+              </div>
               <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-400">
-                {hasLocation && <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-amber-500" />{location}</span>}
+                {hasLocation && <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-amber-500" />{locationLabel}</span>}
                 <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-amber-500" />{site.period}</span>
               </div>
             </div>
@@ -105,7 +121,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
 
         <SiteGallery title={site.title} imageUrls={imageUrls} />
 
-        <nav aria-label="Sayfa bölümleri" className="mt-6 flex gap-5 overflow-x-auto border-b border-zinc-800 text-sm">
+        <nav aria-label="Sayfa bölümleri" className="mt-6 flex gap-5 overflow-x-auto rounded-t-xl border border-zinc-800 bg-zinc-900/50 px-4 pt-3 text-sm backdrop-blur-md">
           <a href="#tarihce" className="shrink-0 border-b-2 border-amber-500 pb-3 font-medium text-amber-300">Tarihçe</a>
           <a href="#ozellikler" className="shrink-0 border-b-2 border-transparent pb-3 text-zinc-400 transition-colors hover:text-zinc-100">{sectionTitle}</a>
           {hasLocation && <a href="#ziyaret" className="shrink-0 border-b-2 border-transparent pb-3 text-zinc-400 transition-colors hover:text-zinc-100">Ziyaret / Konum</a>}
@@ -134,7 +150,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                 {highlightsList.length > 0 ? (
                   <ul className="grid gap-3 sm:grid-cols-2">
                     {highlightsList.map((item: string, index: number) => (
-                      <li key={`${index}-${item}`} className="flex items-start gap-3 border-l border-amber-500/50 bg-zinc-900/60 px-4 py-3.5 text-sm leading-6 text-zinc-300">
+                      <li key={`${index}-${item}`} className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-zinc-900/50 px-4 py-3.5 text-sm leading-6 text-zinc-300 backdrop-blur-md transition-colors hover:border-amber-500/40">
                         <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
                         <span>{item}</span>
                       </li>
@@ -154,20 +170,20 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                 </h2>
               </div>
               {hasPhysicalLocation ? (
-                <Card className="overflow-hidden rounded-md border-zinc-800 bg-zinc-900/60">
+                <Card className="overflow-hidden rounded-md border border-zinc-800 bg-zinc-900/50 backdrop-blur-md">
                   <div className="relative flex min-h-44 items-center justify-center overflow-hidden bg-[linear-gradient(rgba(161,161,170,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(161,161,170,0.08)_1px,transparent_1px)] bg-[size:28px_28px]">
                     <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(217,119,6,0.12),transparent_65%)]" />
                     <div className="relative flex flex-col items-center gap-2 text-center">
                       <span className="flex h-11 w-11 items-center justify-center rounded-full border border-amber-400/40 bg-amber-500/15 text-amber-300 shadow-lg shadow-amber-950/40">
                         <MapPin className="h-5 w-5" />
                       </span>
-                      <span className="max-w-sm px-4 text-sm font-medium text-zinc-200">{location}</span>
+                      <span className="max-w-sm px-4 text-sm font-medium text-zinc-200">{locationLabel}</span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-3 border-t border-zinc-800 p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-xs text-zinc-500">Eserin kayıtlı konumu</p>
-                      <p className="mt-1 text-sm text-zinc-200">{location}</p>
+                      <p className="mt-1 text-sm text-zinc-200">{locationLabel}</p>
                     </div>
                     <a href={mapUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-amber-400 transition-colors hover:text-amber-300">
                       Harita uygulamasında aç <ArrowUpRight className="h-4 w-4" />
@@ -175,14 +191,14 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                   </div>
                 </Card>
               ) : (
-                <Card className="border-zinc-800 bg-zinc-900/60 p-5">
+                <Card className="border border-zinc-800 bg-zinc-900/50 p-5 backdrop-blur-md">
                   <div className="flex items-start gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-400/40 bg-amber-500/15 text-amber-300">
                       <MapPin className="h-5 w-5" />
                     </span>
                     <div>
                       <p className="text-sm font-medium text-zinc-200">Coğrafi Yayılım / Köken</p>
-                      <p className="mt-1 text-sm leading-6 text-zinc-400">{location}</p>
+                      <p className="mt-1 text-sm leading-6 text-zinc-400">{locationLabel}</p>
                     </div>
                   </div>
                 </Card>
@@ -191,7 +207,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
           </article>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <Card className="overflow-hidden rounded-md border-zinc-800 bg-zinc-900/70">
+            <Card className="overflow-hidden rounded-md border border-zinc-800 bg-zinc-900/50 backdrop-blur-md">
               <div className="border-b border-zinc-800 bg-zinc-900 px-5 py-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-400">Koleksiyon kaydı</p>
                 <h2 className="mt-1.5 text-lg font-semibold text-zinc-100">Eser kimliği</h2>
@@ -211,7 +227,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                 </div>
                 {hasLocation && <div className="py-4">
                   <dt className="text-xs text-zinc-500">Konum</dt>
-                  <dd className="mt-1 text-sm leading-6 text-zinc-200">{location}</dd>
+                  <dd className="mt-1 text-sm leading-6 text-zinc-200">{locationLabel}</dd>
                 </div>}
                 {site.contributor_name && (
                   <div className="py-4">

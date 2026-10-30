@@ -132,8 +132,27 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at top, rgba(245, 158, 11, 0.14), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(120, 119, 198, 0.12), transparent 25%),
+      linear-gradient(180deg, #09090b 0%, #111827 100%);
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.72), rgba(24, 24, 27, 0.58));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 40px rgba(2, 6, 23, 0.28);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .soft-gold-ring {
+    box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.14), 0 0 28px rgba(251, 191, 36, 0.12);
   }
 }

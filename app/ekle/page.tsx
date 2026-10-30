@@ -35,11 +35,23 @@ export default function AddSitePage() {
     const highlights = formData.getAll('highlight')
       .map((value) => String(value).trim())
       .filter(Boolean)
+    const optionalNumber = (name: string) => {
+      const value = String(formData.get(name) ?? '').trim()
+      if (!value) return null
+      const number = Number(value)
+      return Number.isFinite(number) ? number : null
+    }
+    const optionalText = (name: string) => {
+      const value = String(formData.get(name) ?? '').trim()
+      return value || null
+    }
     const newSite = {
       id: `${slug || 'eser'}-${Date.now()}`,
       title,
       category: String(formData.get('category')),
-      location: String(formData.get('location') ?? '').trim(),
+      location: optionalText('location'),
+      latitude: optionalNumber('latitude'),
+      longitude: optionalNumber('longitude'),
       period: String(formData.get('period')).trim(),
       details: String(formData.get('details')).trim(),
       contributor_name: String(formData.get('contributor_name') ?? '').trim(),
@@ -97,7 +109,7 @@ export default function AddSitePage() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-zinc-800 bg-zinc-900/70 p-5 shadow-2xl shadow-black/20 sm:p-8">
+        <section className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 shadow-2xl shadow-black/20 backdrop-blur-md sm:p-8">
           <div className="mb-7 border-b border-zinc-800 pb-5">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500">Yeni kayıt</p>
             <h2 className="mt-2 text-xl font-semibold text-zinc-100">Eser bilgileri</h2>
@@ -159,6 +171,17 @@ export default function AddSitePage() {
                 />
               </div>
               <p className="mt-2 text-xs text-zinc-500">💡 Not: Somut olmayan kültürel miraslar (efsane, mani, gelenek vb.) için konum alanını boş bırakabilirsiniz.</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="latitude" className="mb-2 block text-sm font-medium text-zinc-300">Enlem <span className="text-zinc-500">(opsiyonel)</span></label>
+                <input id="latitude" name="latitude" type="number" step="any" placeholder="Örn. 41.0082" className="h-11 w-full rounded-md border border-zinc-700 bg-zinc-950 px-3.5 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
+              </div>
+              <div>
+                <label htmlFor="longitude" className="mb-2 block text-sm font-medium text-zinc-300">Boylam <span className="text-zinc-500">(opsiyonel)</span></label>
+                <input id="longitude" name="longitude" type="number" step="any" placeholder="Örn. 28.9784" className="h-11 w-full rounded-md border border-zinc-700 bg-zinc-950 px-3.5 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
+              </div>
             </div>
 
             <div>
