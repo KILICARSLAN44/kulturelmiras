@@ -20,6 +20,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.kulturelmiras.me"),
   title: "Kültürel Miras Arşivi | Türkiye'nin Dijital Mirası",
   description: "Türkiye'nin tarihi, mimari ve sözlü kültür mirasını dijital ortamda belgeleyen ve koruyan topluluk platformu.",
   openGraph: {
