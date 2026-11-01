@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { requireAdminAccess } from '@/lib/auth/server'
 import { SiteHeader } from '@/components/site-header'
 import { SitePreview } from '@/components/site-preview'
 
@@ -34,9 +33,7 @@ async function updateApproval(formData: FormData) {
   const isApproved = formData.get('is_approved') === 'true'
   if (!id) return
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { supabase } = await requireAdminAccess()
 
   const { error } = await supabase.from('eserler').update({ is_approved: isApproved }).eq('id', id)
   if (error) throw new Error('Eserin onay durumu güncellenemedi.')
@@ -49,9 +46,7 @@ async function deleteSite(formData: FormData) {
   const id = String(formData.get('id') ?? '')
   if (!id) return
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { supabase } = await requireAdminAccess()
 
   const { error } = await supabase.from('eserler').delete().eq('id', id)
   if (error) throw new Error('Eser silinemedi.')
@@ -106,10 +101,7 @@ function SiteTable({ sites, pending }: { sites: Site[]; pending: boolean }) {
 }
 
 export default async function AdminPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
+  const { supabase } = await requireAdminAccess()
   const { data: sites, error } = await supabase
     .from('eserler')
     .select('*')

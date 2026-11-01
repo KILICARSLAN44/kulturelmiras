@@ -1,35 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Dices, Heart, Menu, Plus, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { useUserRole } from '@/lib/auth/use-user-role'
 
 export function SiteHeader() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isRandomLoading, setIsRandomLoading] = useState(false)
   const [randomError, setRandomError] = useState<string | null>(null)
   const router = useRouter()
-
-  useEffect(() => {
-    let mounted = true
-
-    supabase.auth.getSession().then(({ data }) => {
-      if (mounted) setIsAuthenticated(Boolean(data.session))
-    })
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(Boolean(session))
-    })
-
-    return () => {
-      mounted = false
-      listener.subscription.unsubscribe()
-    }
-  }, [])
+  const { user, isAdmin } = useUserRole()
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut()
@@ -37,7 +21,6 @@ export function SiteHeader() {
       console.error('Çıkış yapılırken hata oluştu:', error)
       return
     }
-    setIsAuthenticated(false)
   }
 
   async function handleRandomSite() {
@@ -117,9 +100,9 @@ export function SiteHeader() {
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>Eser Ekle</span>
           </Link>
-          {isAuthenticated ? (
+          {user ? (
             <>
-              <Link href="/admin" className="whitespace-nowrap rounded-md px-2 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white md:px-3">Admin Paneli</Link>
+              {isAdmin && <Link href="/admin" className="whitespace-nowrap rounded-md px-2 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white md:px-3">Admin Paneli</Link>}
               <button type="button" onClick={handleSignOut} className="whitespace-nowrap rounded-md px-2 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white md:px-3">Çıkış Yap</button>
             </>
           ) : (
@@ -166,9 +149,9 @@ export function SiteHeader() {
                   <Plus className="h-4 w-4" aria-hidden="true" />
                   Eser Ekle
                 </Link>
-                {isAuthenticated ? (
+                {user ? (
                   <>
-                    <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-3 transition-colors hover:bg-zinc-800 hover:text-white">Admin Paneli</Link>
+                    {isAdmin && <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-3 transition-colors hover:bg-zinc-800 hover:text-white">Admin Paneli</Link>}
                     <button type="button" onClick={handleSignOut} className="rounded-md px-3 py-3 text-left transition-colors hover:bg-zinc-800 hover:text-white">Çıkış Yap</button>
                   </>
                 ) : (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Geist_Mono, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { AmbientParticles } from "@/components/ambient-particles";
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="tr"
