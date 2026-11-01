@@ -13,7 +13,7 @@ export function SiteHeader() {
   const [isRandomLoading, setIsRandomLoading] = useState(false)
   const [randomError, setRandomError] = useState<string | null>(null)
   const router = useRouter()
-  const { user, isAdmin } = useUserRole()
+  const { user, role, isAdmin } = useUserRole()
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut()
@@ -103,6 +103,7 @@ export function SiteHeader() {
           {user ? (
             <>
               {isAdmin && <Link href="/admin" className="whitespace-nowrap rounded-md px-2 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white md:px-3">Admin Paneli</Link>}
+              {role === 'super_admin' && <Link href="/admin/kullanicilar" className="whitespace-nowrap rounded-md px-2 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white md:px-3">Kullanıcılar</Link>}
               <button type="button" onClick={handleSignOut} className="whitespace-nowrap rounded-md px-2 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white md:px-3">Çıkış Yap</button>
             </>
           ) : (
@@ -152,6 +153,7 @@ export function SiteHeader() {
                 {user ? (
                   <>
                     {isAdmin && <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-3 transition-colors hover:bg-zinc-800 hover:text-white">Admin Paneli</Link>}
+                    {role === 'super_admin' && <Link href="/admin/kullanicilar" onClick={() => setIsMenuOpen(false)} className="rounded-md px-3 py-3 transition-colors hover:bg-zinc-800 hover:text-white">Kullanıcılar</Link>}
                     <button type="button" onClick={handleSignOut} className="rounded-md px-3 py-3 text-left transition-colors hover:bg-zinc-800 hover:text-white">Çıkış Yap</button>
                   </>
                 ) : (

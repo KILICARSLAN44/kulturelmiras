@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { requireAdminAccess } from '@/lib/auth/server'
 import { SiteHeader } from '@/components/site-header'
 import { SitePreview } from '@/components/site-preview'
+import { Badge } from '@/components/ui/badge'
 
 type Site = {
   id: string
@@ -13,6 +14,8 @@ type Site = {
   highlights: string[]
   images: string[]
   is_approved: boolean
+  approved_by: string | null
+  last_edited_by: string | null
 }
 
 function normalizeList(value: unknown): string[] {
@@ -33,9 +36,12 @@ async function updateApproval(formData: FormData) {
   const isApproved = formData.get('is_approved') === 'true'
   if (!id) return
 
-  const { supabase } = await requireAdminAccess()
+  const { supabase, user } = await requireAdminAccess()
 
-  const { error } = await supabase.from('eserler').update({ is_approved: isApproved }).eq('id', id)
+  const { error } = await supabase.from('eserler').update({
+    is_approved: isApproved,
+    ...(isApproved ? { approved_by: user.email ?? null } : {}),
+  }).eq('id', id)
   if (error) throw new Error('Eserin onay durumu güncellenemedi.')
   revalidatePath('/admin')
   revalidatePath('/')
@@ -60,6 +66,13 @@ function SiteRow({ site, pending }: { site: Site; pending: boolean }) {
       <td className="px-4 py-3 font-medium">{site.title}</td>
       <td className="px-4 py-3 text-zinc-400">{site.category}</td>
       <td className="px-4 py-3 text-zinc-400">{site.location}</td>
+      <td className="px-4 py-3">
+        <div className="flex flex-col gap-1 text-xs text-zinc-500">
+          {site.approved_by && <Badge variant="outline" className="border-emerald-500/30 text-emerald-300">Onaylayan: {site.approved_by}</Badge>}
+          {site.last_edited_by && <Badge variant="outline" className="border-amber-500/30 text-amber-300">Son Düzenleyen: {site.last_edited_by}</Badge>}
+          {!site.approved_by && !site.last_edited_by && <span>-</span>}
+        </div>
+      </td>
       <td className="px-4 py-3">
         <div className="flex flex-wrap items-center gap-3">
           {pending && (
@@ -90,7 +103,7 @@ function SiteTable({ sites, pending }: { sites: Site[]; pending: boolean }) {
     <div className="overflow-x-auto">
       <table className="w-full min-w-[700px] text-left text-sm">
         <thead className="bg-zinc-900 text-zinc-400">
-          <tr><th className="px-4 py-3">Eser</th><th className="px-4 py-3">Kategori</th><th className="px-4 py-3">Konum</th><th className="px-4 py-3">İşlemler</th></tr>
+          <tr><th className="px-4 py-3">Eser</th><th className="px-4 py-3">Kategori</th><th className="px-4 py-3">Konum</th><th className="px-4 py-3">Admin bilgisi</th><th className="px-4 py-3">İşlemler</th></tr>
         </thead>
         <tbody className="divide-y divide-zinc-800">
           {sites.map((site) => <SiteRow key={site.id} site={site} pending={pending} />)}
@@ -120,6 +133,8 @@ export default async function AdminPage() {
     highlights: normalizeList(site.highlights),
     images: normalizeImages(site.image_urls, site.image),
     is_approved: site.is_approved,
+    approved_by: site.approved_by ?? null,
+    last_edited_by: site.last_edited_by ?? null,
   }))
   const pendingSites = allSites.filter((site) => !site.is_approved)
   const publishedSites = allSites.filter((site) => site.is_approved)

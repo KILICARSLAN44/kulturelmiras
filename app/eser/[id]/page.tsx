@@ -113,6 +113,8 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
               </div>
               <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-400">
                 {hasLocation && <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-amber-500" />{locationLabel}</span>}
+                {site.approved_by && <Badge variant="outline" className="border-emerald-500/30 text-emerald-300">Onaylayan: {site.approved_by}</Badge>}
+                {site.last_edited_by && <Badge variant="outline" className="border-amber-500/30 text-amber-300">Son Düzenleyen: {site.last_edited_by}</Badge>}
               </div>
             </div>
             {hasLocation && <a

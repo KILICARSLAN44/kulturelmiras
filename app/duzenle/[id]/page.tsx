@@ -78,6 +78,7 @@ export default function EditSitePage() {
       image: imageInputs.filter(Boolean),
       image_urls: imageInputs.filter(Boolean),
       highlights: highlightInputs.filter(Boolean),
+      last_edited_by: (await supabase.auth.getUser()).data.user?.email ?? null,
     }).eq('id', id)
     if (updateError) {
       setError('Eser güncellenemedi. Veritabanı sütunlarını kontrol edip tekrar deneyin.')

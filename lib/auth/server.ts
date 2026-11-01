@@ -13,3 +13,11 @@ export async function requireAdminAccess() {
 
   return { supabase, user, role }
 }
+
+export async function requireSuperAdminAccess() {
+  const access = await requireAdminAccess()
+
+  if (access.role !== 'super_admin') redirect('/')
+
+  return access
+}
